@@ -58,14 +58,19 @@
 
                 document.addEventListener("DOMNodeInserted", function () 
                 {
-                    var lines = document.getElementsByTagName('p').length;
-                    var isnew = lines - oldlines;
+                    var lines = document.getElementsByTagName('p');
+                    var isnew = lines.length - oldlines;
                     if ( isnew > 0 )
                     {
-                        var i=lines-1
-                        var newline = document.getElementsByTagName('p')[i].innerHTML;
-                        var linechars = newline.length;
-                        newchars = chars + linechars;
+                        // Get the new line
+                        var newline = lines[lines.length - 1];
+                        // Get parent
+                        var parent = newline.parentElement;
+                        parent.remove(newline);
+                        parent.prepend(newline);
+                        
+                        var linechars = newline.innerHTML.length;
+                        var newchars = chars + linechars;
                         
                         var charsdisp = newchars.toLocaleString();
                         var linesdisp = lines.toLocaleString();
@@ -94,12 +99,12 @@
                     if ( remove_lines > 0 )
                     {
                         var q = remove_lines - 1;
-                        var last = document.getElementsByTagName('p')[q].innerHTML;
-                        var lastlen = last.length;
+                        var first = document.getElementsByTagName('p')[0].innerHTML;
+                        var firstlen = first.length;
                         
-                        $('body').children('p:last').remove();
+                        $('body').children('p:first').remove();
                         
-                        var newch = chars - lastlen;
+                        var newch = chars - firstlen;
                         var newchdisp = newch.toLocaleString();
                         var newl = oldlines - 1;
                         var newldisp = newl.toLocaleString();
