@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <title>Texthooker Canvas</title>
+        <style type="text/css">
+            body 
+            {
+                background-color: #1E1E1E;
+                color: #C0C0C0;
+                font-size: 2em;
+            }
+            .container 
+            {
+                position:fixed;
+                top:3px;
+                right:5px;
+                display:inline-block;
+            }
+            #counter 
+            {
+                background-color:rgba(25,25,25,0.8);
+                color:#9d9d9d;
+                font-size:.4em;
+                line-height:100%;
+                float:left;
+                padding-left:8px;
+                padding-right:8px;
+                padding-top:5px;
+                padding-bottom:5px;
+            }
+            #remove_button 
+            {
+                background-color:rgba(25,25,25,0.8);
+                color:#9d9d9d;
+                font-size:.4em;
+                line-height:100%;
+                float:right;
+                margin-right:10px;
+                padding-left:8px;
+                padding-right:8px;
+                padding-top:5px;
+                padding-bottom:5px;
+                cursor:pointer;
+                cursor:hand;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="remove_button" title="Remove last line">x</div>
+            <div id="counter" title="No. of characters / No. of lines">0 / 0</div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script>
+            $(document).ready(function()
+            {
+                oldlines = 0;
+                chars = 0;
+
+                document.addEventListener("DOMNodeInserted", function () 
+                {
+                    var lines = document.getElementsByTagName('p').length;
+                    var isnew = lines - oldlines;
+                    if ( isnew > 0 )
+                    {
+                        var i=lines-1
+                        var newline = document.getElementsByTagName('p')[i].innerHTML;
+                        var linechars = newline.length;
+                        newchars = chars + linechars;
+                        
+                        var charsdisp = newchars.toLocaleString();
+                        var linesdisp = lines.toLocaleString();
+                        
+                        jQuery('#counter').text(charsdisp+' / '+linesdisp);
+                        
+                        oldlines = lines;
+                        chars = newchars;
+                        
+                        var LEEWAY = 200;
+                        var b = document.body;
+                        var offset = b.scrollHeight - b.offsetHeight;
+                        var scrollPos = (b.scrollTop+offset);
+                        var scrollBottom = (b.scrollHeight - (b.clientHeight+offset));
+                    
+                        if (scrollPos >= scrollBottom - LEEWAY) 
+                            window.scrollTo(0,document.body.scrollHeight);
+                    };
+              
+                }, false);
+            
+                document.getElementById("remove_button").addEventListener("click", function() 
+                {
+                    var remove_lines = document.getElementsByTagName('p').length;
+                    
+                    if ( remove_lines > 0 )
+                    {
+                        var q = remove_lines - 1;
+                        var last = document.getElementsByTagName('p')[q].innerHTML;
+                        var lastlen = last.length;
+                        
+                        $('body').children('p:last').remove();
+                        
+                        var newch = chars - lastlen;
+                        var newchdisp = newch.toLocaleString();
+                        var newl = oldlines - 1;
+                        var newldisp = newl.toLocaleString();
+                        jQuery('#counter').text(newchdisp+' / '+newldisp);
+                        
+                        chars = newch;
+                        oldlines = newl;
+                    };
+                });
+            });
+        </script>
+    </body>
+</html>
